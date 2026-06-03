@@ -51,6 +51,10 @@ dependencies:
   # Check if the device has internet (for offline sync logic)
   connectivity_plus: ^6.0.3
 
+  # ── Voice Input ──
+  # speech_to_text: convert speech to text (voice input for measurements)
+  speech_to_text: ^6.6.0
+
   # ── File System ──
   # path_provider: get the app's documents directory (for SQLite database file)
   path_provider: ^2.1.2
