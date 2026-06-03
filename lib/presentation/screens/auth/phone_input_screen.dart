@@ -1,64 +1,38 @@
 // lib/presentation/screens/auth/phone_input_screen.dart
 //
-// PHONE INPUT SCREEN
-// ===================
-// The first screen the user sees. They enter their phone number
-// to receive a one-time password (OTP) via SMS.
+// PHONE INPUT SCREEN (Riverpod version)
+// ======================================
+// Now uses Riverpod for state management instead of setState.
+// This is the proper Flutter pattern — state lives in providers,
+// not in the widget.
 //
-// KEY FLUTTER CONCEPTS:
-// - StatefulWidget = a widget that can change over time (has "state")
-// - TextEditingController = controls a text input field
-// - Form + TextFormField = input field with validation
-// - context.go() = navigate to another screen
+// KEY CHANGES FROM PREVIOUS VERSION:
+// - No more StatefulWidget → StatelessWidget + Riverpod
+// - ref.watch(authProvider) rebuilds the UI when auth state changes
+// - ref.read(authProvider.notifier) calls methods on the AuthNotifier
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../providers/auth_provider.dart';
 
-class PhoneInputScreen extends StatefulWidget {
+// ConsumerWidget = a StatelessWidget that can read Riverpod providers
+class PhoneInputScreen extends ConsumerWidget {
   const PhoneInputScreen({super.key});
 
   @override
-  State<PhoneInputScreen> createState() => _PhoneInputScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch auth state — rebuilds when it changes
+    final authState = ref.watch(authProvider);
+    final phoneController = TextEditingController();
 
-class _PhoneInputScreenState extends State<PhoneInputScreen> {
-  // Controller — reads and controls the text in the input field
-  final _phoneController = TextEditingController();
-  bool _isLoading = false;
+    // Listen for auth state changes to navigate when logged in
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.isLoggedIn) {
+        context.go('/projects');
+      }
+    });
 
-  @override
-  void dispose() {
-    // Clean up the controller when the screen is removed
-    _phoneController.dispose();
-    super.dispose();
-  }
-
-  void _sendCode() async {
-    final phone = _phoneController.text.trim();
-
-    // Basic validation
-    if (phone.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your phone number')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    // TODO: Send OTP via Firebase Auth
-    // For now, just navigate to the verify screen
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-      // Navigate to OTP verification, passing the phone number
-      context.go('/auth/verify', extra: phone);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -91,24 +65,51 @@ class _PhoneInputScreenState extends State<PhoneInputScreen> {
 
               // Phone number input
               TextField(
-                controller: _phoneController,
+                controller: phoneController,
                 keyboardType: TextInputType.phone,
+                enabled: !authState.isLoading,
                 decoration: const InputDecoration(
                   labelText: 'Phone Number',
-                  hintText: '(555) 123-4567',
+                  hintText: '+1 (555) 123-4567',
                   prefixIcon: Icon(Icons.phone),
                 ),
               ),
+
+              // Error message
+              if (authState.error != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  authState.error!,
+                  style: TextStyle(color: Theme.of(context).errorColor),
+                ),
+              ],
+
               const SizedBox(height: 24),
 
               // Continue button
               ElevatedButton(
-                onPressed: _isLoading ? null : _sendCode,
-                child: _isLoading
+                onPressed: authState.isLoading
+                    ? null
+                    : () async {
+                        final phone = phoneController.text.trim();
+                        if (phone.isEmpty) return;
+
+                        // Call the auth notifier to send OTP
+                        final notifier = ref.read(authProvider.notifier);
+                        final verificationId = await notifier.sendOtp(phone);
+
+                        if (verificationId != null && context.mounted) {
+                          context.go('/auth/verify', extra: phone);
+                        }
+                      },
+                child: authState.isLoading
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Text('Send Code'),
               ),

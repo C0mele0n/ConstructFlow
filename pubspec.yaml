@@ -47,7 +47,13 @@ dependencies:
   # GoRouter: handles screen-to-screen navigation (including deep links for invites)
   go_router: ^13.0.0
 
-  # ── Utilities ──
+  # ── Connectivity ──
+  # Check if the device has internet (for offline sync logic)
+  connectivity_plus: ^6.0.3
+
+  # ── File System ──
+  # path_provider: get the app's documents directory (for SQLite database file)
+  path_provider: ^2.1.2
   # UUID generator — creates unique IDs for projects, measurements, cuts, etc.
   uuid: ^4.2.2
   # Date formatting

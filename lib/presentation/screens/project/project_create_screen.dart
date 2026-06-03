@@ -1,21 +1,22 @@
 // lib/presentation/screens/project/project_create_screen.dart
 //
-// PROJECT CREATE SCREEN
-// =====================
-// Form to create a new project. The user who creates it
-// automatically becomes the Project Leader.
+// PROJECT CREATE SCREEN (Riverpod version)
+// =========================================
+// Uses Riverpod to create a project and save it to the local database.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../providers/project_provider.dart';
 
-class ProjectCreateScreen extends StatefulWidget {
+class ProjectCreateScreen extends ConsumerStatefulWidget {
   const ProjectCreateScreen({super.key});
 
   @override
-  State<ProjectCreateScreen> createState() => _ProjectCreateScreenState();
+  ConsumerState<ProjectCreateScreen> createState() => _ProjectCreateScreenState();
 }
 
-class _ProjectCreateScreenState extends State<ProjectCreateScreen> {
+class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _addressController = TextEditingController();
@@ -30,31 +31,44 @@ class _ProjectCreateScreenState extends State<ProjectCreateScreen> {
     super.dispose();
   }
 
-  void _createProject() async {
+  Future<void> _createProject() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isCreating = true);
 
-    // TODO: Save to Firebase
-    await Future.delayed(const Duration(seconds: 1));
+    final notifier = ref.read(projectListProvider.notifier);
+    final projectId = await notifier.createProject(
+      name: _nameController.text.trim(),
+      createdByUserId: 'current_user', // TODO: get from auth provider
+      address: _addressController.text.trim().isNotEmpty
+          ? _addressController.text.trim()
+          : null,
+      description: _descriptionController.text.trim().isNotEmpty
+          ? _descriptionController.text.trim()
+          : null,
+    );
 
     if (mounted) {
-      context.go('/projects');
+      if (projectId != null) {
+        context.go('/projects');
+      } else {
+        setState(() => _isCreating = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to create project')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Project'),
-      ),
+      appBar: AppBar(title: const Text('New Project')),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Project name (required)
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -71,7 +85,6 @@ class _ProjectCreateScreenState extends State<ProjectCreateScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Address (optional)
             TextFormField(
               controller: _addressController,
               decoration: const InputDecoration(
@@ -82,7 +95,6 @@ class _ProjectCreateScreenState extends State<ProjectCreateScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Description (optional)
             TextFormField(
               controller: _descriptionController,
               maxLines: 3,
@@ -95,7 +107,6 @@ class _ProjectCreateScreenState extends State<ProjectCreateScreen> {
             ),
             const SizedBox(height: 32),
 
-            // Create button
             ElevatedButton(
               onPressed: _isCreating ? null : _createProject,
               child: _isCreating
