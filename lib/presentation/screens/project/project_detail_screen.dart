@@ -1,0 +1,15 @@
+// lib/presentation/screens/project/project_detail_screen.dart
+import 'package:flutter/material.dart';
+
+class ProjectDetailScreen extends StatelessWidget {
+  final String projectId;
+  const ProjectDetailScreen({super.key, required this.projectId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Project')),
+      body: Center(child: Text('Project: $projectId\n\nRole-based content goes here.')),
+    );
+  }
+}

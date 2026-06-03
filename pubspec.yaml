@@ -1,0 +1,98 @@
+# pubspec.yaml
+# ============
+# This file tells Flutter:
+# 1. What your app is called and what version it is
+# 2. What other packages (libraries) your app needs
+# 3. Where your code and assets live
+#
+# Think of it like a "shopping list" of tools your app needs.
+
+name: constructflow
+description: Construction crew coordination app
+version: 0.1.0+1
+
+# SDK constraint — what version of Dart is required
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+# ──────────────────────────────────────────────
+# DEPENDENCIES — packages your app uses
+# ──────────────────────────────────────────────
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── State Management ──
+  # Riverpod: tracks data and updates the UI when data changes
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # ── Local Database ──
+  # Drift: type-safe SQLite for storing data on the phone (offline-first)
+  drift: ^2.14.1
+  sqlite3_flutter_libs: ^0.5.18
+
+  # ── Firebase (backend) ──
+  # Core Firebase — required for all Firebase features
+  firebase_core: ^2.24.2
+  # Firebase Auth — phone number login
+  firebase_auth: ^4.16.0
+  # Firestore — cloud database with offline support
+  cloud_firestore: ^4.14.0
+  # Firebase Storage — for photos (measurements, receipts, installations)
+  firebase_storage: ^11.6.0
+
+  # ── Navigation ──
+  # GoRouter: handles screen-to-screen navigation (including deep links for invites)
+  go_router: ^13.0.0
+
+  # ── Connectivity ──
+  # Check if the device has internet (for offline sync logic)
+  connectivity_plus: ^6.0.3
+
+  # ── Voice Input ──
+  # speech_to_text: convert speech to text (voice input for measurements)
+  speech_to_text: ^6.6.0
+
+  # ── File System ──
+  # path_provider: get the app's documents directory (for SQLite database file)
+  path_provider: ^2.1.2
+  # UUID generator — creates unique IDs for projects, measurements, cuts, etc.
+  uuid: ^4.2.2
+  # Date formatting
+  intl: ^0.19.0
+  # Image picker — take photos or choose from gallery
+  image_picker: ^1.0.7
+  # Phone number input & validation
+  phone_number: ^2.0.0
+  # URL launcher — open links (supplier websites, etc.)
+  url_launcher: ^6.2.2
+
+# ──────────────────────────────────────────────
+# DEV DEPENDENCIES — tools for development only
+# (not included in the final app)
+# ──────────────────────────────────────────────
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code generation for Riverpod
+  riverpod_generator: ^2.3.9
+  # Code generation for Drift (database)
+  drift_dev: ^2.14.1
+  # General code generation tool
+  build_runner: ^2.4.8
+  # Linting — catches common mistakes
+  flutter_lints: ^3.0.1
+
+# ──────────────────────────────────────────────
+# FLUTTER CONFIG
+# ──────────────────────────────────────────────
+flutter:
+  uses-material-design: true
+
+  # App icons and images would go here:
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
