@@ -29,6 +29,10 @@ import 'package:constructflow/presentation/screens/project/project_detail_screen
 // ── Profile Screens ──
 import 'package:constructflow/presentation/screens/profile/profile_screen.dart';
 
+// ── Project Screens ──
+import 'package:constructflow/presentation/screens/project/project_dashboard_screen.dart';
+import 'package:constructflow/presentation/screens/measurement/measurement_entry_screen.dart';
+
 // ── Placeholder screens for roles (we'll build these later) ──
 import 'package:constructflow/presentation/screens/measurement/measurement_list_screen.dart';
 import 'package:constructflow/presentation/screens/cut/cut_list_screen.dart';
@@ -84,6 +88,22 @@ final GoRouter appRouter = GoRouter(
                     final projectId = state.pathParameters['projectId']!;
                     return ProjectDetailScreen(projectId: projectId);
                   },
+                  routes: [
+                    GoRoute(
+                      path: 'dashboard',
+                      builder: (context, state) {
+                        final projectId = state.pathParameters['projectId']!;
+                        return ProjectDashboardScreen(projectId: projectId);
+                      },
+                    ),
+                    GoRoute(
+                      path: 'measurements/new',
+                      builder: (context, state) {
+                        final projectId = state.pathParameters['projectId']!;
+                        return MeasurementEntryScreen(projectId: projectId);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
