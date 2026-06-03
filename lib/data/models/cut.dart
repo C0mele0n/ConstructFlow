@@ -5,6 +5,8 @@
 // Represents a single cut from a cut list. Generated from measurements.
 // The Cutter sees these and marks them complete.
 
+import 'measurement.dart'; // For MeasurementUnit
+
 enum CutStatus {
   pending,    // Not started
   inProgress, // Currently being cut

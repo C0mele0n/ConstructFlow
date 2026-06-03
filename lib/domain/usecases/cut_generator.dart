@@ -64,11 +64,13 @@ class CutBoard {
 /// A cut assigned to a board
 class CutAssignment {
   final String cutId;
+  final String measurementId;
   final double length;
   final double position; // Position along the board
 
   CutAssignment({
     required this.cutId,
+    required this.measurementId,
     required this.length,
     required this.position,
   });
@@ -183,6 +185,7 @@ class CutGenerator {
           final position = board.totalLength - board.remainingLength;
           board.cuts.add(CutAssignment(
             cutId: '${cut.measurementId}_${boards.indexOf(board)}',
+            measurementId: cut.measurementId,
             length: cut.length,
             position: position,
           ));
@@ -196,6 +199,7 @@ class CutGenerator {
         final newBoard = CutBoard(boardLength);
         newBoard.cuts.add(CutAssignment(
           cutId: '${cut.measurementId}_${boards.length}',
+          measurementId: cut.measurementId,
           length: cut.length,
           position: 0,
         ));

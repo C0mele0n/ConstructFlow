@@ -19,6 +19,21 @@ enum ProjectStatus {
   completed,   // Job is done
 }
 
+extension ProjectStatusDisplay on ProjectStatus {
+  String get displayName {
+    switch (this) {
+      case ProjectStatus.planning:
+        return 'Planning';
+      case ProjectStatus.active:
+        return 'Active';
+      case ProjectStatus.onHold:
+        return 'On Hold';
+      case ProjectStatus.completed:
+        return 'Completed';
+    }
+  }
+}
+
 class Project {
   final String id;
   final String name;              // "Kitchen Remodel - 123 Main St"
