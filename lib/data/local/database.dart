@@ -275,6 +275,24 @@ class AppDatabase extends _$AppDatabase {
   Future<void> updateInstallation(LocalInstallation installation) =>
       update(installations).replace(installation);
 
+  // ── Cost operations ──
+
+  Future<void> insertCost(LocalCost cost) => into(costs).insert(cost);
+  Future<List<LocalCost>> getCostsForProject(String projectId) =>
+      (select(costs)..where((c) => c.projectId.equals(projectId))).get();
+  Future<void> updateCost(LocalCost cost) => update(costs).replace(cost);
+  Future<void> deleteCost(String id) =>
+      (delete(costs)..where((c) => c.id.equals(id))).go();
+
+  // ── Installation operations ──
+
+  Future<void> insertInstallation(LocalInstallation installation) =>
+      into(installations).insert(installation);
+  Future<List<LocalInstallation>> getInstallationsForProject(String projectId) =>
+      (select(installations)..where((i) => i.projectId.equals(projectId))).get();
+  Future<void> updateInstallation(LocalInstallation installation) =>
+      update(installations).replace(installation);
+
   // ── Sync operations ──
 
   /// Get all unsynced records across all tables
